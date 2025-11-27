@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from 'react';
 import { Calendar, CheckCircle2, AlertCircle } from 'lucide-react';
@@ -48,7 +48,7 @@ export function UpcomingBills({ bills }: UpcomingBillsProps) {
     return 'outline';
   };
 
-  // Renderizar placeholder durante SSR
+  // Se não montou ainda, não renderiza nada para evitar hydration mismatch
   if (!mounted) {
     return (
       <Card className="p-6">
@@ -67,20 +67,16 @@ export function UpcomingBills({ bills }: UpcomingBillsProps) {
             {bills.map((bill) => (
               <div
                 key={bill.id}
-                className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+                className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-800"
               >
                 <div className="flex items-center gap-3 flex-1">
-                  {bill.isPaid ? (
-                    <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0" />
-                  ) : (
-                    <AlertCircle className="w-5 h-5 flex-shrink-0 text-orange-600" />
-                  )}
+                  <div className="w-5 h-5 rounded-full bg-gray-200 dark:bg-gray-800 animate-pulse flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-sm text-gray-900 dark:text-gray-100 truncate">
                       {bill.name}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {formatDate(bill.dueDate)}
+                      Carregando...
                     </p>
                   </div>
                 </div>
@@ -92,8 +88,8 @@ export function UpcomingBills({ bills }: UpcomingBillsProps) {
                       currency: 'BRL',
                     }).format(bill.amount)}
                   </span>
-                  <Badge variant={bill.isPaid ? 'default' : 'outline'} className="text-xs">
-                    {bill.isPaid ? 'Pago' : 'Pendente'}
+                  <Badge variant="outline" className="text-xs">
+                    -
                   </Badge>
                 </div>
               </div>

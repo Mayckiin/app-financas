@@ -1,0 +1,35 @@
+.fab-button {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--neon-cyan);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #070707;
+  box-shadow: 0 8px 24px rgba(0, 255, 200, 0.3),
+              0 0 40px rgba(0, 255, 200, 0.2);
+  transition: all 240ms cubic-bezier(0.2, 0.9, 0.3, 1);
+  z-index: 1000;
+}
+
+.fab-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 12px 32px rgba(0, 255, 200, 0.4),
+              0 0 60px rgba(0, 255, 200, 0.3);
+}
+
+.fab-button:active {
+  transform: scale(0.95);
+}
+
+.fab-button svg {
+  width: 28px;
+  height: 28px;
+  stroke-width: 2.5px;
+}
