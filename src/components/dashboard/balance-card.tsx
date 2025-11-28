@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from 'react';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 
@@ -9,7 +10,12 @@ interface BalanceCardProps {
 }
 
 export function BalanceCard({ totalBalance, trend = 0 }: BalanceCardProps) {
+  const [mounted, setMounted] = useState(false);
   const isPositiveTrend = trend >= 0;
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   
   return (
     <Card className="p-6 bg-gradient-to-br from-blue-600 to-blue-800 text-white border-0 shadow-xl">
@@ -17,12 +23,16 @@ export function BalanceCard({ totalBalance, trend = 0 }: BalanceCardProps) {
         <p className="text-sm font-medium opacity-90">Saldo Total Disponível</p>
         <div className="flex items-end justify-between">
           <h2 className="text-4xl font-bold tracking-tight">
-            {new Intl.NumberFormat('pt-BR', {
-              style: 'currency',
-              currency: 'BRL',
-            }).format(totalBalance)}
+            {mounted ? (
+              new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              }).format(totalBalance)
+            ) : (
+              <span className="opacity-0">R$ 0,00</span>
+            )}
           </h2>
-          {trend !== 0 && (
+          {mounted && trend !== 0 && (
             <div className={`flex items-center gap-1 text-sm font-medium ${
               isPositiveTrend ? 'text-green-300' : 'text-red-300'
             }`}>

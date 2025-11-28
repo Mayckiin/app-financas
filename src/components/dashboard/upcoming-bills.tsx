@@ -58,7 +58,7 @@ export function UpcomingBills({ bills }: UpcomingBillsProps) {
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 Contas a Vencer
               </h3>
-              <p className="text-sm text-muted-foreground">Próximos 7 dias</p>
+              <p className="text-sm text-white">Próximos 7 dias</p>
             </div>
             <Calendar className="w-5 h-5 text-muted-foreground" />
           </div>
@@ -75,7 +75,7 @@ export function UpcomingBills({ bills }: UpcomingBillsProps) {
                     <p className="font-medium text-sm text-gray-900 dark:text-gray-100 truncate">
                       {bill.name}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-white">
                       Carregando...
                     </p>
                   </div>
@@ -108,7 +108,7 @@ export function UpcomingBills({ bills }: UpcomingBillsProps) {
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
               Contas a Vencer
             </h3>
-            <p className="text-sm text-muted-foreground">Próximos 7 dias</p>
+            <p className="text-sm text-white">Próximos 7 dias</p>
           </div>
           <Calendar className="w-5 h-5 text-muted-foreground" />
         </div>
@@ -135,7 +135,7 @@ export function UpcomingBills({ bills }: UpcomingBillsProps) {
                     <p className="font-medium text-sm text-gray-900 dark:text-gray-100 truncate">
                       {bill.name}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-white">
                       {formatDate(bill.dueDate)}
                     </p>
                   </div>

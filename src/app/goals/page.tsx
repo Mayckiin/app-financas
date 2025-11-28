@@ -63,7 +63,16 @@ export default function GoalsPage() {
   };
 
   const calculateDaysLeft = (deadline: string) => {
-    return Math.ceil((new Date(deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+    const deadlineDate = new Date(deadline);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return Math.ceil((deadlineDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  };
+
+  const formatDate = (dateString: string) => {
+    if (!mounted) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-BR');
   };
 
   return (
@@ -74,13 +83,13 @@ export default function GoalsPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link href="/" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-5 h-5 text-white" />
               </Link>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                   Metas Financeiras
                 </h1>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-white">
                   Acompanhe seus objetivos financeiros
                 </p>
               </div>
@@ -161,13 +170,13 @@ export default function GoalsPage() {
                   <div>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Atual</p>
                     <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                      {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(goal.currentAmount)}
+                      {mounted ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(goal.currentAmount) : 'R$ 0,00'}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Meta</p>
                     <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                      {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(goal.targetAmount)}
+                      {mounted ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(goal.targetAmount) : 'R$ 0,00'}
                     </p>
                   </div>
                 </div>
@@ -177,7 +186,7 @@ export default function GoalsPage() {
                   <div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">Prazo</p>
                     <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {new Date(goal.deadline).toLocaleDateString('pt-BR')}
+                      {formatDate(goal.deadline) || '--/--/----'}
                     </p>
                     {mounted && (
                       <p className={`text-xs ${daysLeft > 30 ? 'text-green-500' : daysLeft > 0 ? 'text-yellow-500' : 'text-red-500'}`}>

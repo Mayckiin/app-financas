@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { ArrowLeft, Download, FileText, Calendar, TrendingUp, TrendingDown } from 'lucide-react';
 import Link from 'next/link';
 import { useStore } from '@/hooks/use-store';
@@ -11,9 +11,17 @@ export default function ReportsPage() {
   const { transactions, categories } = useStore();
   const [period, setPeriod] = useState('month');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [mounted, setMounted] = useState(false);
+
+  // Garantir que o componente só renderize após montagem no cliente
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Filtrar transações por período
   const filteredTransactions = useMemo(() => {
+    if (!mounted) return [];
+    
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const startOfYear = new Date(now.getFullYear(), 0, 1);
@@ -31,10 +39,20 @@ export default function ReportsPage() {
 
       return isInPeriod && isInCategory;
     });
-  }, [transactions, period, selectedCategory]);
+  }, [transactions, period, selectedCategory, mounted]);
 
   // Calcular estatísticas
   const stats = useMemo(() => {
+    if (!mounted) {
+      return {
+        income: 0,
+        expenses: 0,
+        balance: 0,
+        categoryBreakdown: {},
+        transactionCount: 0,
+      };
+    }
+
     const income = filteredTransactions
       .filter(t => t.type === 'income')
       .reduce((sum, t) => sum + t.amount, 0);
@@ -65,7 +83,7 @@ export default function ReportsPage() {
       categoryBreakdown,
       transactionCount: filteredTransactions.length,
     };
-  }, [filteredTransactions]);
+  }, [filteredTransactions, mounted]);
 
   // Exportar CSV
   const exportCSV = () => {
@@ -117,21 +135,33 @@ export default function ReportsPage() {
     XLSX.writeFile(wb, `relatorio-${period}-${new Date().toISOString().split('T')[0]}.xlsx`);
   };
 
+  // Mostrar loading enquanto não montar
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Carregando relatórios...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       {/* Header */}
       <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
               <Link href="/" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
-                <ArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-5 h-5 text-white" />
               </Link>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                   Relatórios
                 </h1>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-white">
                   Análise detalhada das suas finanças
                 </p>
               </div>
@@ -139,17 +169,17 @@ export default function ReportsPage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={exportCSV}
-                className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-colors"
+                className="flex items-center gap-2 px-3 py-2 sm:px-4 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-colors text-sm"
               >
                 <Download className="w-4 h-4" />
-                CSV
+                <span className="hidden sm:inline">CSV</span>
               </button>
               <button
                 onClick={exportExcel}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors"
+                className="flex items-center gap-2 px-3 py-2 sm:px-4 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors text-sm"
               >
                 <Download className="w-4 h-4" />
-                Excel
+                <span className="hidden sm:inline">Excel</span>
               </button>
             </div>
           </div>
